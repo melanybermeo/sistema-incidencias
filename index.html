@@ -3,39 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Registro de Incidencias</title>
+  <title>Registro de Incidencias</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header class="encabezado">
-    <h1>Sistema de Registro de Incidencias</h1>
-    <p class="version">Versión <span id="version-app">1.0.0</span></p>
+    <h1>Registro de Incidencias</h1>
+    <p>Reporta y da seguimiento a las incidencias del equipo.</p>
   </header>
 
   <main class="contenedor">
-    <!-- Formulario de registro -->
-    <section class="tarjeta">
-      <h2>Registrar incidencia</h2>
-      <form id="form-incidencia" novalidate>
+    <section class="tarjeta" aria-labelledby="titulo-formulario">
+      <h2 id="titulo-formulario">Nueva incidencia</h2>
+
+      <form id="form-incidencia">
         <div class="campo">
           <label for="titulo">Título</label>
-          <input type="text" id="titulo" placeholder="Ej.: No carga la página de inicio" required>
+          <input type="text" id="titulo" name="titulo" maxlength="80"
+                 placeholder="Ej.: La página de inicio no carga">
         </div>
 
         <div class="campo">
           <label for="descripcion">Descripción</label>
-          <textarea id="descripcion" rows="3" placeholder="Describe el problema" required></textarea>
+          <textarea id="descripcion" name="descripcion" rows="4"
+                    placeholder="Describe qué ocurrió y cómo reproducirlo"></textarea>
         </div>
 
         <div class="fila">
           <div class="campo">
-            <label for="reportado-por">Reportado por</label>
-            <input type="text" id="reportado-por" placeholder="Nombre del usuario" required>
-          </div>
-
-          <div class="campo">
             <label for="prioridad">Prioridad</label>
-            <select id="prioridad">
+            <select id="prioridad" name="prioridad">
               <option value="Baja">Baja</option>
               <option value="Media" selected>Media</option>
               <option value="Alta">Alta</option>
@@ -44,28 +41,32 @@
 
           <div class="campo">
             <label for="estado">Estado</label>
-            <select id="estado">
+            <select id="estado" name="estado">
               <option value="Abierta" selected>Abierta</option>
               <option value="En proceso">En proceso</option>
-              <option value="Cerrada">Cerrada</option>
+              <option value="Resuelta">Resuelta</option>
             </select>
           </div>
         </div>
 
-        <p id="mensaje" class="mensaje" role="alert"></p>
-        <button type="submit" class="boton">Registrar</button>
+        <button type="submit" class="boton">Registrar incidencia</button>
+        <p id="mensaje" class="mensaje" role="status" aria-live="polite"></p>
       </form>
     </section>
 
-    <!-- Listado de incidencias -->
-    <section class="tarjeta">
-      <h2>Incidencias registradas (<span id="contador">0</span>)</h2>
-      <div id="lista-incidencias" class="lista"></div>
+    <section class="tarjeta" aria-labelledby="titulo-listado">
+      <div class="cabecera-lista">
+        <h2 id="titulo-listado">Incidencias registradas</h2>
+        <span id="contador" class="contador" title="Total de incidencias">0</span>
+      </div>
+
+      <p id="lista-vacia" class="vacio">Todavía no hay incidencias registradas.</p>
+      <ul id="lista-incidencias" class="lista"></ul>
     </section>
   </main>
 
   <footer class="pie">
-    <p>Gestión de la Configuración del Software — UNEMI</p>
+    <p>Registro de Incidencias · Proyecto académico de SCM y despliegue continuo</p>
   </footer>
 
   <script src="js/app.js"></script>

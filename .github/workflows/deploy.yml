@@ -1,0 +1,60 @@
+
+name: Validación y despliegue del sistema de incidencias
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  # Primer trabajo: validar la aplicación
+  validacion:
+    name: Validar aplicación
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Ejecutar script de validación
+        run: node scripts/validate.js
+
+  despliegue:
+    name: Desplegar en GitHub Pages
+    needs: validacion
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Preparar archivos de la aplicación
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Publicar aplicación
+        id: deployment
+        uses: actions/deploy-pages@v4
