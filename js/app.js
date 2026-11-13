@@ -1,106 +1,54 @@
-// Sistema de Registro de Incidencias - v1.0.0
-// Funcionalidades: registrar y listar incidencias.
-// Los datos se guardan en el navegador (localStorage), sin base de datos ni servidor.
+// =============================================
+// Registro de Incidencias — lógica principal
+// Las incidencias se guardan en el navegador con localStorage.
+// =============================================
 
-const CLAVE_STORAGE = "incidencias";
+const CLAVE_STORAGE = 'incidencias';
 
-const form = document.getElementById("form-incidencia");
-const lista = document.getElementById("lista-incidencias");
-const contador = document.getElementById("contador");
-const mensaje = document.getElementById("mensaje");
+const formulario = document.getElementById('form-incidencia');
+const mensaje = document.getElementById('mensaje');
 
-// ---------- Datos ----------
+// ---------- Almacenamiento (localStorage) ----------
 
 function obtenerIncidencias() {
   try {
-    return JSON.parse(localStorage.getItem(CLAVE_STORAGE)) || [];
-  } catch (e) {
+    const datos = JSON.parse(localStorage.getItem(CLAVE_STORAGE));
+    return Array.isArray(datos) ? datos : [];
+  } catch (error) {
     return [];
   }
 }
 
 function guardarIncidencias(incidencias) {
-  try {
-    localStorage.setItem(CLAVE_STORAGE, JSON.stringify(incidencias));
-  } catch (e) {
-    console.error("No se pudo guardar en localStorage", e);
-  }
+  localStorage.setItem(CLAVE_STORAGE, JSON.stringify(incidencias));
 }
 
-// ---------- Utilidades ----------
+// ---------- Formulario de registro ----------
 
-// Evita que el texto ingresado se interprete como HTML
-function escaparHTML(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto;
-  return div.innerHTML;
-}
-
-function mostrarMensaje(texto, tipo) {
+function mostrarMensaje(texto) {
   mensaje.textContent = texto;
-  mensaje.className = "mensaje " + tipo;
+  clearTimeout(mostrarMensaje.temporizador);
+  mostrarMensaje.temporizador = setTimeout(() => {
+    mensaje.textContent = '';
+  }, 3000);
 }
 
-// ---------- Interfaz ----------
-
-function renderizarIncidencias(incidencias) {
-  contador.textContent = incidencias.length;
-
-  if (incidencias.length === 0) {
-    lista.innerHTML = '<p class="vacio">No hay incidencias registradas.</p>';
-    return;
-  }
-
-  lista.innerHTML = incidencias
-    .map(
-      (inc) => `
-      <article class="incidencia">
-        <h3>#${inc.id} - ${escaparHTML(inc.titulo)}</h3>
-        <p>${escaparHTML(inc.descripcion)}</p>
-        <div class="meta">
-          <span class="etiqueta prioridad-${inc.prioridad}">${inc.prioridad}</span>
-          <span class="etiqueta estado">${inc.estado}</span>
-          Reportado por ${escaparHTML(inc.reportadoPor)} · ${inc.fecha}
-        </div>
-      </article>`
-    )
-    .join("");
-}
-
-// ---------- Eventos ----------
-
-form.addEventListener("submit", (evento) => {
+formulario.addEventListener('submit', (evento) => {
   evento.preventDefault();
 
-  const titulo = document.getElementById("titulo").value.trim();
-  const descripcion = document.getElementById("descripcion").value.trim();
-  const reportadoPor = document.getElementById("reportado-por").value.trim();
-  const prioridad = document.getElementById("prioridad").value;
-  const estado = document.getElementById("estado").value;
-
-  if (!titulo || !descripcion || !reportadoPor) {
-    mostrarMensaje("Completa todos los campos obligatorios.", "error");
-    return;
-  }
+  const incidencia = {
+    id: Date.now(),
+    titulo: document.getElementById('titulo').value.trim(),
+    descripcion: document.getElementById('descripcion').value.trim(),
+    prioridad: document.getElementById('prioridad').value,
+    estado: document.getElementById('estado').value,
+    fecha: new Date().toISOString()
+  };
 
   const incidencias = obtenerIncidencias();
-  const nuevoId = incidencias.length > 0 ? incidencias[incidencias.length - 1].id + 1 : 1;
-
-  incidencias.push({
-    id: nuevoId,
-    titulo,
-    descripcion,
-    reportadoPor,
-    prioridad,
-    estado,
-    fecha: new Date().toLocaleString("es-EC"),
-  });
-
+  incidencias.push(incidencia);
   guardarIncidencias(incidencias);
-  renderizarIncidencias(incidencias);
-  form.reset();
-  mostrarMensaje("Incidencia registrada correctamente.", "exito");
-});
 
-// Carga inicial
-renderizarIncidencias(obtenerIncidencias());
+  formulario.reset();
+  mostrarMensaje('Incidencia registrada correctamente.');
+});
