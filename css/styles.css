@@ -427,7 +427,7 @@ body {
   outline-offset: 2px;
 }
 
-/* ===== Pantallas pequeñas ===== */
+
 @media (max-width: 480px) {
   .tarjeta {
     padding: 1.15rem;
@@ -448,7 +448,7 @@ body {
   }
 }
 
-/* ===== Accesibilidad: respetar reducción de movimiento ===== */
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
