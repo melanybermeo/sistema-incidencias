@@ -78,11 +78,11 @@ body {
   color: #fff;
   text-align: left;
   padding-block: 2rem 2.25rem;
-  /* Alinea el texto con el borde izquierdo del contenido */
+  
   padding-inline: max(var(--margen-lateral), calc((100% - var(--ancho-max)) / 2 + var(--margen-lateral)));
 }
 
-/* Franja con los tres colores de prioridad: es el detalle distintivo de la página */
+
 .encabezado::after {
   content: "";
   position: absolute;
@@ -116,7 +116,7 @@ body {
   font-size: 0.85rem;
 }
 
-/* ===== Contenedor y tarjetas ===== */
+
 .contenedor {
   flex: 1;
   width: 100%;
@@ -134,7 +134,7 @@ body {
     grid-template-columns: 360px minmax(0, 1fr);
   }
 
-  /* El formulario se queda visible mientras se recorre el listado */
+  
   .contenedor > .tarjeta:first-child {
     position: sticky;
     top: 1.5rem;
@@ -158,7 +158,7 @@ body {
   border-bottom: 1px solid var(--borde);
 }
 
-/* ===== Formulario ===== */
+
 .campo {
   display: flex;
   flex-direction: column;
@@ -195,7 +195,7 @@ body {
   min-height: 6.5rem;
 }
 
-/* Flecha propia para los select */
+
 .campo select {
   appearance: none;
   -webkit-appearance: none;
@@ -266,7 +266,7 @@ body {
   color: var(--alta-texto);
 }
 
-/* ===== Listado de incidencias ===== */
+
 .cabecera-lista {
   display: flex;
   align-items: center;
@@ -282,7 +282,7 @@ body {
   border-bottom: 0;
 }
 
-/* Contador del título "Incidencias registradas (N)" */
+
 #contador {
   font-variant-numeric: tabular-nums;
 }
@@ -297,7 +297,7 @@ body {
   padding: 0.15rem 0.75rem;
 }
 
-/* Estado vacío */
+
 .vacio {
   color: var(--suave);
   text-align: center;
@@ -329,7 +329,7 @@ body {
   border-color: var(--borde-fuerte);
 }
 
-/* La franja lateral indica la prioridad */
+
 .incidencia.prioridad-alta  { border-left-color: var(--alta); }
 .incidencia.prioridad-media { border-left-color: var(--media); }
 .incidencia.prioridad-baja  { border-left-color: var(--baja); }
@@ -367,7 +367,7 @@ body {
   color: var(--suave);
 }
 
-/* ===== Etiquetas ===== */
+
 .etiqueta {
   display: inline-flex;
   align-items: center;
@@ -380,7 +380,7 @@ body {
   white-space: nowrap;
 }
 
-/* Punto de color que acompaña al texto (el color no es la única pista) */
+
 .etiqueta::before {
   content: "";
   width: 0.45rem;
@@ -390,18 +390,18 @@ body {
   flex-shrink: 0;
 }
 
-/* Prioridad */
+
 .etiqueta-alta     { background: var(--alta-fondo);  color: var(--alta-texto); }
 .etiqueta-media    { background: var(--media-fondo); color: var(--media-texto); }
 .etiqueta-baja     { background: var(--baja-fondo);  color: var(--baja-texto); }
 
-/* Estado */
+
 .etiqueta-abierta  { background: var(--abierta-fondo);  color: var(--abierta-texto); }
 .etiqueta-proceso  { background: var(--proceso-fondo);  color: var(--proceso-texto); }
 .etiqueta-resuelta,
 .etiqueta-cerrada  { background: var(--resuelta-fondo); color: var(--resuelta-texto); }
 
-/* ===== Botón eliminar ===== */
+
 .boton-eliminar {
   flex-shrink: 0;
   font: inherit;
@@ -427,7 +427,7 @@ body {
   outline-offset: 2px;
 }
 
-/* ===== Pantallas pequeñas ===== */
+
 @media (max-width: 480px) {
   .tarjeta {
     padding: 1.15rem;
