@@ -54,15 +54,28 @@
       </form>
     </section>
 
-    <section class="tarjeta" aria-labelledby="titulo-listado">
-      <div class="cabecera-lista">
-        <h2 id="titulo-listado">Incidencias registradas</h2>
-        <span id="contador" class="contador" title="Total de incidencias">0</span>
-      </div>
+    
+     <!-- Listado de incidencias -->
+     <section class="tarjeta">
 
-      <p id="lista-vacia" class="vacio">Todavía no hay incidencias registradas.</p>
-      <ul id="lista-incidencias" class="lista"></ul>
-    </section>
+      <h2>Incidencias registradas (<span id="contador">0</span>)</h2>
+
+       <!-- Filtro por estado -->
+      <div class="campo">
+        <label for="filtro-estado">Filtrar por estado</label>
+
+        <select id="filtro-estado">
+            <option value="Todos">Todos los estados</option>
+            <option value="Abierta">Abierta</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Cerrada">Cerrada</option>
+        </select>
+        </div>
+
+       <div id="lista-incidencias" class="lista"></div>
+
+      </section>
+
   </main>
 
   <footer class="pie">

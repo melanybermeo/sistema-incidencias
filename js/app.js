@@ -1,152 +1,179 @@
-// =============================================
-// Registro de Incidencias — lógica principal
-// Las incidencias se guardan en el navegador con localStorage.
-// =============================================
 
-const CLAVE_STORAGE = 'incidencias';
+// Sistema de Registro de Incidencias
+// Version 1.1.0
+// Funcionalidades: registrar, listar y filtrar incidencias.
+// Los datos se almacenan en localStorage.
 
-const formulario = document.getElementById('form-incidencia');
-const mensaje = document.getElementById('mensaje');
-const listaIncidencias = document.getElementById('lista-incidencias');
-const listaVacia = document.getElementById('lista-vacia');
-const contador = document.getElementById('contador');
+const CLAVE_STORAGE = "incidencias";
 
-// Clases CSS según la prioridad y el estado
-const CLASE_PRIORIDAD = { Alta: 'alta', Media: 'media', Baja: 'baja' };
-const CLASE_ESTADO = { Abierta: 'abierta', 'En proceso': 'proceso', Resuelta: 'resuelta' };
+// Elementos del formulario
+const form = document.getElementById("form-incidencia");
+const tituloInput = document.getElementById("titulo");
+const descripcionInput = document.getElementById("descripcion");
+const prioridadInput = document.getElementById("prioridad");
+const estadoInput = document.getElementById("estado");
 
-// ---------- Almacenamiento (localStorage) ----------
+// Elementos de la interfaz
+const lista = document.getElementById("lista-incidencias");
+const contador = document.getElementById("contador");
+const mensaje = document.getElementById("mensaje");
 
+// Filtro por estado
+const filtroEstado = document.getElementById("filtro-estado");
+
+// Obtener incidencias guardadas
 function obtenerIncidencias() {
-  try {
-    const datos = JSON.parse(localStorage.getItem(CLAVE_STORAGE));
-    return Array.isArray(datos) ? datos : [];
-  } catch (error) {
-    return [];
-  }
+    try {
+        return JSON.parse(localStorage.getItem(CLAVE_STORAGE)) || [];
+    } catch (error) {
+        console.error("Error al obtener incidencias:", error);
+        return [];
+    }
 }
 
+// Guardar incidencias
 function guardarIncidencias(incidencias) {
-  localStorage.setItem(CLAVE_STORAGE, JSON.stringify(incidencias));
+    try {
+        localStorage.setItem(
+            CLAVE_STORAGE,
+            JSON.stringify(incidencias)
+        );
+        return true;
+    } catch (error) {
+        console.error("Error al guardar incidencias:", error);
+        return false;
+    }
 }
 
-// ---------- Formulario de registro ----------
-
-function mostrarMensaje(texto) {
-  mensaje.textContent = texto;
-  clearTimeout(mostrarMensaje.temporizador);
-  mostrarMensaje.temporizador = setTimeout(() => {
-    mensaje.textContent = '';
-  }, 3000);
+// Evitar que el texto se interprete como HTML
+function escaparHTML(texto) {
+    const div = document.createElement("div");
+    div.textContent = String(texto ?? "");
+    return div.innerHTML;
 }
 
-formulario.addEventListener('submit', (evento) => {
-  evento.preventDefault();
+// Mostrar mensajes
+function mostrarMensaje(texto, tipo) {
+    if (!mensaje) return;
 
-  const incidencia = {
-    id: Date.now(),
-    titulo: document.getElementById('titulo').value.trim(),
-    descripcion: document.getElementById('descripcion').value.trim(),
-    prioridad: document.getElementById('prioridad').value,
-    estado: document.getElementById('estado').value,
-    fecha: new Date().toISOString()
-  };
+    mensaje.textContent = texto;
+    mensaje.className = "mensaje " + tipo;
+}
 
-  const incidencias = obtenerIncidencias();
-  incidencias.push(incidencia);
-  guardarIncidencias(incidencias);
+// Mostrar incidencias y aplicar filtro
+function renderizarIncidencias() {
 
-  formulario.reset();
-  mostrarMensaje('Incidencia registrada correctamente.');
-  actualizarListado();
+    const incidencias = obtenerIncidencias();
+
+    const estadoSeleccionado = filtroEstado
+        ? filtroEstado.value
+        : "Todos";
+
+    const incidenciasFiltradas = estadoSeleccionado === "Todos"
+        ? incidencias
+        : incidencias.filter(
+            incidencia => incidencia.estado === estadoSeleccionado
+        );
+
+    if (contador) {
+        contador.textContent = incidenciasFiltradas.length;
+    }
+
+    if (incidenciasFiltradas.length === 0) {
+        lista.innerHTML =
+            '<p class="vacio">No hay incidencias registradas.</p>';
+        return;
+    }
+
+    lista.innerHTML = incidenciasFiltradas.map(inc => `
+        <article class="incidencia">
+            <h3>#${escaparHTML(inc.id)} - ${escaparHTML(inc.titulo)}</h3>
+
+            <p>${escaparHTML(inc.descripcion)}</p>
+
+            <div class="meta">
+                <span class="etiqueta prioridad-${escaparHTML(inc.prioridad)}">
+                    ${escaparHTML(inc.prioridad)}
+                </span>
+
+                <span class="etiqueta estado">
+                    ${escaparHTML(inc.estado)}
+                </span>
+
+                ${inc.reportadoPor
+                    ? "Reportado por " + escaparHTML(inc.reportadoPor)
+                    : ""
+                }
+
+                · ${escaparHTML(inc.fecha)}
+            </div>
+        </article>
+    `).join("");
+}
+
+// Registrar una nueva incidencia
+form.addEventListener("submit", function(evento) {
+
+    evento.preventDefault();
+
+    const titulo = tituloInput.value.trim();
+    const descripcion = descripcionInput.value.trim();
+    const prioridad = prioridadInput.value;
+    const estado = estadoInput.value;
+
+    // Validar campos obligatorios
+    if (!titulo || !descripcion) {
+        mostrarMensaje(
+            "Completa el título y la descripción.",
+            "error"
+        );
+        return;
+    }
+
+    const incidencias = obtenerIncidencias();
+
+    const nuevoId = incidencias.length > 0
+        ? Math.max(...incidencias.map(inc => Number(inc.id) || 0)) + 1
+        : 1;
+
+    const nuevaIncidencia = {
+        id: nuevoId,
+        titulo,
+        descripcion,
+        reportadoPor: "",
+        prioridad,
+        estado,
+        fecha: new Date().toLocaleString("es-EC")
+    };
+
+    incidencias.push(nuevaIncidencia);
+
+    if (!guardarIncidencias(incidencias)) {
+        mostrarMensaje(
+            "No se pudo guardar la incidencia.",
+            "error"
+        );
+        return;
+    }
+
+    form.reset();
+
+    if (filtroEstado) {
+        filtroEstado.value = "Todos";
+    }
+
+    renderizarIncidencias();
+
+    mostrarMensaje(
+        "Incidencia registrada correctamente.",
+        "exito"
+    );
 });
 
-// ---------- Listado de incidencias ----------
-
-function formatearFecha(fechaISO) {
-  return new Date(fechaISO).toLocaleString('es-EC', {
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  });
+// Escuchar cambios en el filtro
+if (filtroEstado) {
+    filtroEstado.addEventListener("change", renderizarIncidencias);
 }
 
-function crearEtiqueta(texto, clase) {
-  const etiqueta = document.createElement('span');
-  etiqueta.className = `etiqueta etiqueta-${clase}`;
-  etiqueta.textContent = texto;
-  return etiqueta;
-}
-
-function crearElementoIncidencia(incidencia) {
-  const clasePrioridad = CLASE_PRIORIDAD[incidencia.prioridad] || 'media';
-  const claseEstado = CLASE_ESTADO[incidencia.estado] || 'abierta';
-
-  const item = document.createElement('li');
-  item.className = `incidencia prioridad-${clasePrioridad}`;
-
-  // Título y botón para eliminar
-  const cabecera = document.createElement('div');
-  cabecera.className = 'incidencia-cabecera';
-
-  const titulo = document.createElement('h3');
-  titulo.textContent = incidencia.titulo;
-
-  const botonEliminar = document.createElement('button');
-  botonEliminar.type = 'button';
-  botonEliminar.className = 'boton-eliminar';
-  botonEliminar.textContent = 'Eliminar';
-  botonEliminar.dataset.id = incidencia.id;
-
-  cabecera.append(titulo, botonEliminar);
-
-  // Descripción
-  const descripcion = document.createElement('p');
-  descripcion.className = 'incidencia-descripcion';
-  descripcion.textContent = incidencia.descripcion;
-
-  // Prioridad, estado y fecha
-  const datos = document.createElement('div');
-  datos.className = 'incidencia-datos';
-
-  const fecha = document.createElement('time');
-  fecha.dateTime = incidencia.fecha;
-  fecha.textContent = formatearFecha(incidencia.fecha);
-
-  datos.append(
-    crearEtiqueta(incidencia.prioridad, clasePrioridad),
-    crearEtiqueta(incidencia.estado, claseEstado),
-    fecha
-  );
-
-  item.append(cabecera, descripcion, datos);
-  return item;
-}
-
-// Dibuja en pantalla la lista que recibe (sirve también para listas filtradas)
-function renderizarIncidencias(incidencias) {
-  listaIncidencias.innerHTML = '';
-  incidencias.forEach((incidencia) => {
-    listaIncidencias.appendChild(crearElementoIncidencia(incidencia));
-  });
-  listaVacia.hidden = incidencias.length > 0;
-  contador.textContent = incidencias.length;
-}
-
-// Lee localStorage y muestra las incidencias, de la más reciente a la más antigua
-function actualizarListado() {
-  const incidencias = obtenerIncidencias().reverse();
-  renderizarIncidencias(incidencias);
-}
-
-listaIncidencias.addEventListener('click', (evento) => {
-  const boton = evento.target.closest('.boton-eliminar');
-  if (!boton) return;
-
-  const id = Number(boton.dataset.id);
-  const restantes = obtenerIncidencias().filter((incidencia) => incidencia.id !== id);
-  guardarIncidencias(restantes);
-  actualizarListado();
-});
-
-// Carga inicial
-actualizarListado();
+// Cargar incidencias al iniciar
+renderizarIncidencias();
