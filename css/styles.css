@@ -1,54 +1,118 @@
-/* ===== Variables y base ===== */
+/* =========================================================
+   Registro de Incidencias — hoja de estilos */
+
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
+
+/* ===== Variables ===== */
 :root {
-  --color-fondo: #f4f6fb;
-  --color-tarjeta: #ffffff;
-  --color-texto: #1f2937;
-  --color-suave: #6b7280;
-  --color-borde: #d9dee8;
-  --color-primario: #2563eb;
-  --color-primario-oscuro: #1d4ed8;
-  --color-exito: #15803d;
-  --radio: 10px;
-  --sombra: 0 2px 10px rgba(15, 23, 42, 0.06);
+  
+  --fondo: #edf0f4;
+  --tarjeta: #ffffff;
+  --tinta: #151e2b;
+  --texto: #243042;
+  --suave: #5f6b7d;
+  --borde: #d5dbe4;
+  --borde-fuerte: #b8c1ce;
+
+  
+  --primario: #0d6c80;
+  --primario-oscuro: #0a5565;
+  --primario-claro: #dff1f5;
+
+  
+  --alta: #c8372d;
+  --alta-fondo: #fde8e6;
+  --alta-texto: #8f1f17;
+  --media: #d98a0b;
+  --media-fondo: #fdf0d3;
+  --media-texto: #7a4d00;
+  --baja: #2f8f5b;
+  --baja-fondo: #dcf3e5;
+  --baja-texto: #1b5e3a;
+
+  
+  --abierta-fondo: #dbe8fb;
+  --abierta-texto: #1d4a8f;
+  --proceso-fondo: #ece4fb;
+  --proceso-texto: #523590;
+  --resuelta-fondo: #d9f2ea;
+  --resuelta-texto: #17614a;
+
+  --radio-tarjeta: 12px;
+  --radio-control: 8px;
+  --radio-item: 6px;
+
+  --fuente: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --ancho-max: 1100px;
+  --margen-lateral: 1.25rem;
 }
 
-* {
+/* ===== Base ===== */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
-  background: var(--color-fondo);
-  color: var(--color-texto);
-  line-height: 1.5;
+  font-family: var(--fuente);
+  font-size: 1rem;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.55;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ===== Encabezado y pie ===== */
+
 .encabezado {
-  background: var(--color-primario);
+  position: relative;
+  background: var(--tinta);
   color: #fff;
-  padding: 1.75rem 1.5rem;
-  text-align: center;
+  text-align: left;
+  padding-block: 2rem 2.25rem;
+  /* Alinea el texto con el borde izquierdo del contenido */
+  padding-inline: max(var(--margen-lateral), calc((100% - var(--ancho-max)) / 2 + var(--margen-lateral)));
+}
+
+/* Franja con los tres colores de prioridad: es el detalle distintivo de la página */
+.encabezado::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 5px;
+  background: linear-gradient(
+    to right,
+    var(--alta) 0 33.33%,
+    var(--media) 33.33% 66.66%,
+    var(--baja) 66.66% 100%
+  );
 }
 
 .encabezado h1 {
-  font-size: 1.75rem;
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .encabezado p {
-  margin-top: 0.25rem;
-  opacity: 0.9;
+  margin-top: 0.35rem;
+  color: #b9c3d3;
+  max-width: 60ch;
 }
 
 .pie {
-  padding: 1rem;
+  padding: 1.5rem 1rem 2rem;
   text-align: center;
-  color: var(--color-suave);
+  color: var(--suave);
   font-size: 0.85rem;
 }
 
@@ -56,67 +120,104 @@ body {
 .contenedor {
   flex: 1;
   width: 100%;
-  max-width: 1100px;
+  max-width: var(--ancho-max);
   margin: 2rem auto;
-  padding: 0 1.25rem;
+  padding: 0 var(--margen-lateral);
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
 }
 
 @media (min-width: 900px) {
   .contenedor {
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 360px minmax(0, 1fr);
+  }
+
+  /* El formulario se queda visible mientras se recorre el listado */
+  .contenedor > .tarjeta:first-child {
+    position: sticky;
+    top: 1.5rem;
   }
 }
 
 .tarjeta {
-  background: var(--color-tarjeta);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-tarjeta);
   padding: 1.5rem;
 }
 
 .tarjeta h2 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--tinta);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--borde);
 }
 
 /* ===== Formulario ===== */
 .campo {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
   margin-bottom: 1rem;
 }
 
 .campo label {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
+  color: var(--tinta);
 }
 
 .campo input,
 .campo textarea,
 .campo select {
   font: inherit;
-  color: inherit;
-  background: #fff;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--color-borde);
-  border-radius: 8px;
+  color: var(--tinta);
+  background-color: #fff;
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio-control);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+  color: #8893a3;
 }
 
 .campo textarea {
   resize: vertical;
+  min-height: 6.5rem;
 }
 
-.campo input:focus,
-.campo textarea:focus,
-.campo select:focus {
-  outline: 2px solid var(--color-primario);
-  outline-offset: 1px;
+/* Flecha propia para los select */
+.campo select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.25rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235f6b7d' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+}
+
+.campo input:hover,
+.campo textarea:hover,
+.campo select:hover {
+  border-color: var(--suave);
+}
+
+.campo input:focus-visible,
+.campo textarea:focus-visible,
+.campo select:focus-visible {
+  outline: none;
+  border-color: var(--primario);
+  box-shadow: 0 0 0 3px rgba(13, 108, 128, 0.25);
 }
 
 .fila {
@@ -130,24 +231,39 @@ body {
   font: inherit;
   font-weight: 600;
   color: #fff;
-  background: var(--color-primario);
+  background: var(--primario);
   border: none;
-  border-radius: 8px;
-  padding: 0.7rem 1rem;
+  border-radius: var(--radio-control);
+  padding: 0.75rem 1rem;
+  margin-top: 0.25rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s, transform 0.1s;
 }
 
 .boton:hover {
-  background: var(--color-primario-oscuro);
+  background: var(--primario-oscuro);
+}
+
+.boton:active {
+  transform: translateY(1px);
+}
+
+.boton:focus-visible {
+  outline: 3px solid var(--primario);
+  outline-offset: 2px;
 }
 
 .mensaje {
   min-height: 1.5em;
   margin-top: 0.75rem;
-  color: var(--color-exito);
+  color: var(--resuelta-texto);
   font-weight: 600;
+  font-size: 0.9rem;
   text-align: center;
+}
+
+.mensaje.error {
+  color: var(--alta-texto);
 }
 
 /* ===== Listado de incidencias ===== */
@@ -162,21 +278,33 @@ body {
 
 .cabecera-lista h2 {
   margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/* Contador del título "Incidencias registradas (N)" */
+#contador {
+  font-variant-numeric: tabular-nums;
 }
 
 .contador {
-  background: #e0e7ff;
-  color: var(--color-primario-oscuro);
+  background: var(--primario-claro);
+  color: var(--primario-oscuro);
   font-weight: 700;
   font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
   border-radius: 999px;
   padding: 0.15rem 0.75rem;
 }
 
+/* Estado vacío */
 .vacio {
-  color: var(--color-suave);
+  color: var(--suave);
   text-align: center;
-  padding: 2rem 0;
+  padding: 2.5rem 1rem;
+  margin-top: 0.5rem;
+  border: 1.5px dashed var(--borde-fuerte);
+  border-radius: var(--radio-control);
 }
 
 .lista {
@@ -184,18 +312,27 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  margin-top: 0.25rem;
 }
 
 .incidencia {
-  border: 1px solid var(--color-borde);
-  border-left: 4px solid var(--color-primario);
-  border-radius: 8px;
-  padding: 0.9rem 1rem;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-left: 5px solid var(--borde-fuerte);
+  border-radius: var(--radio-item);
+  padding: 0.9rem 1rem 0.95rem;
+  transition: border-color 0.15s, background 0.15s;
 }
 
-.incidencia.prioridad-alta  { border-left-color: #dc2626; }
-.incidencia.prioridad-media { border-left-color: #f59e0b; }
-.incidencia.prioridad-baja  { border-left-color: #16a34a; }
+.incidencia:hover {
+  background: #fafbfd;
+  border-color: var(--borde-fuerte);
+}
+
+/* La franja lateral indica la prioridad */
+.incidencia.prioridad-alta  { border-left-color: var(--alta); }
+.incidencia.prioridad-media { border-left-color: var(--media); }
+.incidencia.prioridad-baja  { border-left-color: var(--baja); }
 
 .incidencia-cabecera {
   display: flex;
@@ -206,14 +343,19 @@ body {
 
 .incidencia h3 {
   font-size: 1rem;
-  word-break: break-word;
+  font-weight: 600;
+  color: var(--tinta);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .incidencia-descripcion {
-  margin: 0.35rem 0 0.6rem;
-  color: #374151;
+  margin: 0.4rem 0 0.75rem;
+  color: var(--texto);
+  font-size: 0.925rem;
+  max-width: 70ch;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .incidencia-datos {
@@ -222,44 +364,93 @@ body {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  color: var(--color-suave);
+  color: var(--suave);
 }
 
+/* ===== Etiquetas ===== */
 .etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1.4;
   border-radius: 999px;
-  padding: 0.1rem 0.6rem;
+  padding: 0.12rem 0.65rem 0.12rem 0.55rem;
+  white-space: nowrap;
 }
 
-.etiqueta-alta     { background: #fee2e2; color: #991b1b; }
-.etiqueta-media    { background: #fef3c7; color: #92400e; }
-.etiqueta-baja     { background: #dcfce7; color: #166534; }
-.etiqueta-abierta  { background: #dbeafe; color: #1e40af; }
-.etiqueta-proceso  { background: #ede9fe; color: #5b21b6; }
-.etiqueta-resuelta { background: #d1fae5; color: #065f46; }
+/* Punto de color que acompaña al texto (el color no es la única pista) */
+.etiqueta::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
 
+/* Prioridad */
+.etiqueta-alta     { background: var(--alta-fondo);  color: var(--alta-texto); }
+.etiqueta-media    { background: var(--media-fondo); color: var(--media-texto); }
+.etiqueta-baja     { background: var(--baja-fondo);  color: var(--baja-texto); }
+
+/* Estado */
+.etiqueta-abierta  { background: var(--abierta-fondo);  color: var(--abierta-texto); }
+.etiqueta-proceso  { background: var(--proceso-fondo);  color: var(--proceso-texto); }
+.etiqueta-resuelta,
+.etiqueta-cerrada  { background: var(--resuelta-fondo); color: var(--resuelta-texto); }
+
+/* ===== Botón eliminar ===== */
 .boton-eliminar {
   flex-shrink: 0;
   font: inherit;
   font-size: 0.8rem;
-  color: var(--color-suave);
-  background: none;
-  border: 1px solid var(--color-borde);
-  border-radius: 6px;
-  padding: 0.2rem 0.6rem;
+  font-weight: 500;
+  color: var(--suave);
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-item);
+  padding: 0.25rem 0.7rem;
   cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
 }
 
 .boton-eliminar:hover {
-  color: #b91c1c;
-  background: #fef2f2;
-  border-color: #fca5a5;
+  color: var(--alta-texto);
+  background: var(--alta-fondo);
+  border-color: #f0aaa4;
 }
 
-/* ===== Pantallas pequeñas ===== */
+.boton-eliminar:focus-visible {
+  outline: 3px solid var(--alta);
+  outline-offset: 2px;
+}
+
+
 @media (max-width: 480px) {
+  .tarjeta {
+    padding: 1.15rem;
+  }
+
   .fila {
     grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .incidencia-cabecera {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .boton-eliminar {
+    align-self: flex-start;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
   }
 }
