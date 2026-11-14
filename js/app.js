@@ -22,14 +22,36 @@ const mensaje = document.getElementById("mensaje");
 const filtroEstado = document.getElementById("filtro-estado");
 
 // Obtener incidencias guardadas
+
 function obtenerIncidencias() {
     try {
-        return JSON.parse(localStorage.getItem(CLAVE_STORAGE)) || [];
-    } catch (error) {
-        console.error("Error al obtener incidencias:", error);
+
+        const datos = JSON.parse(
+            localStorage.getItem(CLAVE_STORAGE)
+        );
+
+        // Comprobar que los datos sean un arreglo
+        if (!Array.isArray(datos)) {
+            console.warn(
+                "Los datos almacenados no tienen un formato válido."
+            );
+
+            return [];
+        }
+
+        return datos;
+
+    } catch (e) {
+
+        console.error(
+            "Error al recuperar las incidencias:",
+            e
+        );
+
         return [];
     }
 }
+
 
 // Guardar incidencias
 function guardarIncidencias(incidencias) {
